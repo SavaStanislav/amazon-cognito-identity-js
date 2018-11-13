@@ -1,6 +1,6 @@
 export default {
   resolve: {
-    extensions: ['', '.js', 'jsx'],
+    extensions: ['', '.js', '.json', 'jsx'],
   },
   devtool: "cheap-eval-source-map",
   entry: ['./src/main.jsx'],

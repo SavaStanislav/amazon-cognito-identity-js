@@ -3250,7 +3250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (err) {
 	          return callback.onFailure(err);
 	        }
-	        return callback(null, data);
+	        return callback.onSuccess(data);
 	      });
 	    }
 	  };
@@ -3528,44 +3528,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	/** @class */
 
 	var DateHelper = function () {
-	  function DateHelper() {
-	    _classCallCheck(this, DateHelper);
-	  }
-
-	  /**
-	   * @returns {string} The current time in "ddd MMM D HH:mm:ss UTC YYYY" format.
-	   */
-	  DateHelper.prototype.getNowString = function getNowString() {
-	    var now = new Date();
-
-	    var weekDay = weekNames[now.getUTCDay()];
-	    var month = monthNames[now.getUTCMonth()];
-	    var day = now.getUTCDate();
-
-	    var hours = now.getUTCHours();
-	    if (hours < 10) {
-	      hours = '0' + hours;
+	    function DateHelper() {
+	        _classCallCheck(this, DateHelper);
 	    }
 
-	    var minutes = now.getUTCMinutes();
-	    if (minutes < 10) {
-	      minutes = '0' + minutes;
-	    }
+	    /**
+	     * @returns {string} The current time in "ddd MMM D HH:mm:ss UTC YYYY" format.
+	     */
+	    DateHelper.prototype.getNowString = function getNowString() {
+	        var now = new Date();
 
-	    var seconds = now.getUTCSeconds();
-	    if (seconds < 10) {
-	      seconds = '0' + seconds;
-	    }
+	        var weekDay = weekNames[now.getUTCDay()];
+	        var month = monthNames[now.getUTCMonth()];
+	        var day = now.getUTCDate();
 
-	    var year = now.getUTCFullYear();
+	        var hours = now.getUTCHours();
+	        if (hours < 10) {
+	            hours = '0' + hours;
+	        }
 
-	    // ddd MMM D HH:mm:ss UTC YYYY
-	    var dateNow = weekDay + ' ' + month + ' ' + day + ' ' + hours + ':' + minutes + ':' + seconds + ' UTC ' + year;
+	        var minutes = now.getUTCMinutes();
+	        if (minutes < 10) {
+	            minutes = '0' + minutes;
+	        }
 
-	    return dateNow;
-	  };
+	        var seconds = now.getUTCSeconds();
+	        if (seconds < 10) {
+	            seconds = '0' + seconds;
+	        }
 
-	  return DateHelper;
+	        var year = now.getUTCFullYear();
+
+	        // ddd MMM D HH:mm:ss UTC YYYY
+	        var dateNow = weekDay + ' ' + month + ' ' + day + ' ' + hours + ':' + minutes + ':' + seconds + ' UTC ' + year;
+
+	        return dateNow;
+	    };
+
+	    return DateHelper;
 	}();
 
 	exports.default = DateHelper;
@@ -3932,6 +3932,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Username: username,
 	        Pool: _this,
 	        Storage: _this.storage
+	      };
+
+	      var returnData = {
+	        user: new _CognitoUser2.default(cognitoUser),
+	        userConfirmed: data.UserConfirmed,
+	        userSub: data.UserSub
+	      };
+
+	      return callback(null, returnData);
+	    });
+	  };
+
+	  /**
+	  * @typedef {object} Admin SignUpResult
+	  * @property {CognitoUser} user New user.
+	  * @property {bool} userConfirmed If the user is already confirmed.
+	  */
+	  /**
+	   * method for signing up a user
+	   * @param {string} username User's username.
+	   * @param {string} password Plain-text initial password entered by user.
+	   * @param {(AttributeArg[])=} userAttributes New user attributes.
+	   * @param {(AttributeArg[])=} validationData Application metadata.
+	   * @param {nodeCallback<SignUpResult>} callback Called on error or with the new user.
+	   * @returns {void}
+	   */
+
+
+	  CognitoUserPool.prototype.adminCreateUser = function adminCreateUser(username, password, userAttributes, validationData, callback) {
+	    var _this2 = this;
+
+	    var jsonReq = {
+	      DesiredDeliveryMediums: ["email"],
+	      ForceAliasCreation: false,
+	      ClientId: this.clientId,
+	      Username: username,
+	      TemporaryPassword: password,
+	      UserAttributes: userAttributes,
+	      ValidationData: validationData
+	    };
+	    if (this.getUserContextData(username)) {
+	      jsonReq.UserContextData = this.getUserContextData(username);
+	    }
+	    this.client.request('AdminCreateUser', jsonReq, function (err, data) {
+	      if (err) {
+	        return callback(err, null);
+	      }
+
+	      var cognitoUser = {
+	        Username: username,
+	        Pool: _this2,
+	        Storage: _this2.storage
 	      };
 
 	      var returnData = {
