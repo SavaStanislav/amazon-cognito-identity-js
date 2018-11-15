@@ -121,11 +121,11 @@ export default class CognitoUserPool {
     });
   }
 
-    /**
-  * @typedef {object} Admin SignUpResult
-  * @property {CognitoUser} user New user.
-  * @property {bool} userConfirmed If the user is already confirmed.
-  */
+  /**
+* @typedef {object} Admin SignUpResult
+* @property {CognitoUser} user New user.
+* @property {bool} userConfirmed If the user is already confirmed.
+*/
   /**
    * method for signing up a user
    * @param {string} username User's username.
@@ -149,7 +149,7 @@ export default class CognitoUserPool {
     if (this.getUserContextData(username)) {
       jsonReq.UserContextData = this.getUserContextData(username);
     }
-    this.client.request('AdminCreateUser', jsonReq, (err, data) => {
+    this.client.makeUnauthenticatedRequest('AdminCreateUser', jsonReq, (err, data) => {
       if (err) {
         return callback(err, null);
       }
@@ -212,7 +212,7 @@ export default class CognitoUserPool {
 
     if (this.advancedSecurityDataCollectionFlag) {
       const advancedSecurityData = amazonCognitoAdvancedSecurityDataConst.getData(username,
-          this.userPoolId, this.clientId);
+        this.userPoolId, this.clientId);
       if (advancedSecurityData) {
         const userContextData = {
           EncodedData: advancedSecurityData,
