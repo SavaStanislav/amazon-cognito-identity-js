@@ -3966,7 +3966,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var jsonReq = {
 	      DesiredDeliveryMediums: ["email"],
 	      ForceAliasCreation: false,
-	      ClientId: this.clientId,
+	      UserPoolId: this.getUserPoolId(),
 	      Username: username,
 	      TemporaryPassword: password,
 	      UserAttributes: userAttributes,
@@ -3975,7 +3975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.getUserContextData(username)) {
 	      jsonReq.UserContextData = this.getUserContextData(username);
 	    }
-	    this.client.makeUnauthenticatedRequest('AdminCreateUser', jsonReq, function (err, data) {
+	    this.client.adminCreateUser(jsonReq, function (err, data) {
 	      if (err) {
 	        return callback(err, null);
 	      }

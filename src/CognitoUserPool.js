@@ -140,7 +140,7 @@ export default class CognitoUserPool {
     const jsonReq = {
       DesiredDeliveryMediums: ["email"],
       ForceAliasCreation: false,
-      ClientId: this.clientId,
+      UserPoolId: this.getUserPoolId(),
       Username: username,
       TemporaryPassword: password,
       UserAttributes: userAttributes,
@@ -149,25 +149,26 @@ export default class CognitoUserPool {
     if (this.getUserContextData(username)) {
       jsonReq.UserContextData = this.getUserContextData(username);
     }
-    this.client.makeUnauthenticatedRequest('AdminCreateUser', jsonReq, (err, data) => {
-      if (err) {
-        return callback(err, null);
-      }
+    this.client.adminCreateUser(jsonReq,
+      (err, data) => {
+        if (err) {
+          return callback(err, null);
+        }
 
-      const cognitoUser = {
-        Username: username,
-        Pool: this,
-        Storage: this.storage,
-      };
+        const cognitoUser = {
+          Username: username,
+          Pool: this,
+          Storage: this.storage,
+        };
 
-      const returnData = {
-        user: new CognitoUser(cognitoUser),
-        userConfirmed: data.UserConfirmed,
-        userSub: data.UserSub,
-      };
+        const returnData = {
+          user: new CognitoUser(cognitoUser),
+          userConfirmed: data.UserConfirmed,
+          userSub: data.UserSub,
+        };
 
-      return callback(null, returnData);
-    });
+        return callback(null, returnData);
+      });
   }
 
 
