@@ -3975,7 +3975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.getUserContextData(username)) {
 	      jsonReq.UserContextData = this.getUserContextData(username);
 	    }
-	    this.client.request('AdminCreateUser', jsonReq, function (err, data) {
+	    this.client.makeUnauthenticatedRequest('AdminCreateUser', jsonReq, function (err, data) {
 	      if (err) {
 	        return callback(err, null);
 	      }
