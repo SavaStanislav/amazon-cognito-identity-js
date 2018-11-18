@@ -172,6 +172,36 @@ export default class CognitoUserPool {
   }
 
 
+  /**
+* @typedef {object} Admin Add user to group
+*/
+  /**
+   * method for adding user to a group
+   * @param {string} username User's username.
+   * @param {string} groupName groupName to add to.
+   * @param {nodeCallback<SignUpResult>} callback Called on error or with the new user.
+   * @returns {void}
+   */
+  adminAddUserToGroup(username, groupName, callback) {
+
+    const jsonReq = {
+      UserPoolId: this.getUserPoolId(),
+      Username: username,
+      GroupName: groupName,
+    };
+    if (this.getUserContextData(username)) {
+      jsonReq.UserContextData = this.getUserContextData(username);
+    }
+    this.client.adminAddUserToGroup(jsonReq,
+      (err, data) => {
+        if (err) {
+          return callback(err, null);
+        }
+
+        return callback(null, data);
+      });
+  }
+
 
   /**
    * method for getting the current user of the application from the local storage
