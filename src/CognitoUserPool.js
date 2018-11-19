@@ -19,7 +19,7 @@ import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityservi
 
 import CognitoUser from './CognitoUser';
 import StorageHelper from './StorageHelper';
-
+import AWS from 'aws-sdk';
 /** @class */
 export default class CognitoUserPool {
   /**
@@ -52,6 +52,7 @@ export default class CognitoUserPool {
       endpoint,
     });
 
+    console.log(AWS.config.credentials)
     /**
      * By default, AdvancedSecurityDataCollectionFlag is set to true,
      * if no input value is provided.
@@ -135,10 +136,10 @@ export default class CognitoUserPool {
    * @param {nodeCallback<SignUpResult>} callback Called on error or with the new user.
    * @returns {void}
    */
-  adminCreateUser(username, password, userAttributes, validationData, callback) {
+  adminCreateUser(username, password, userAttributes, validationData, credentials, callback) {
 
     const jsonReq = {
-      DesiredDeliveryMediums: ["email"],
+      DesiredDeliveryMediums: ["EMAIL"],
       ForceAliasCreation: false,
       UserPoolId: this.getUserPoolId(),
       Username: username,
@@ -149,7 +150,11 @@ export default class CognitoUserPool {
     if (this.getUserContextData(username)) {
       jsonReq.UserContextData = this.getUserContextData(username);
     }
-    this.client.adminCreateUser(jsonReq,
+    this.client.config.update({
+      accessKeyId: credentials.accessKeyId,
+      secretAccessKey: credentials.secretAccessKey,
+    });
+    this.client..adminCreateUser(jsonReq,
       (err, data) => {
         if (err) {
           return callback(err, null);
