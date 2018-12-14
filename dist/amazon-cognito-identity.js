@@ -24683,6 +24683,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  /**
+	   * method for getting a user
+	   * @param {string} username User's username.
+	   * @returns {object} user
+	   */
+
+
+	  CognitoUserPool.prototype.adminGetUser = function adminGetUser(username, credentials, callback) {
+
+	    var jsonReq = {
+	      UserPoolId: this.getUserPoolId(),
+	      Username: username
+	    };
+	    if (this.getUserContextData(username)) {
+	      jsonReq.UserContextData = this.getUserContextData(username);
+	    }
+	    this.client.config.update({
+	      accessKeyId: credentials.accessKeyId,
+	      secretAccessKey: credentials.secretAccessKey
+	    });
+	    this.client.adminGetUser(jsonReq, function (err, data) {
+	      if (err) {
+	        return callback(err, null);
+	      }
+	      return callback(null, data);
+	    });
+	  };
+
+	  /**
 	  * @typedef {object} Admin Add user to group
 	  */
 	  /**

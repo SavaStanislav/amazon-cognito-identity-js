@@ -154,7 +154,7 @@ export default class CognitoUserPool {
       accessKeyId: credentials.accessKeyId,
       secretAccessKey: credentials.secretAccessKey,
     });
-    this.client..adminCreateUser(jsonReq,
+    this.client.adminCreateUser(jsonReq,
       (err, data) => {
         if (err) {
           return callback(err, null);
@@ -175,6 +175,35 @@ export default class CognitoUserPool {
         return callback(null, returnData);
       });
   }
+
+
+  /**
+   * method for getting a user
+   * @param {string} username User's username.
+   * @returns {object} user
+   */
+  adminGetUser(username, credentials, callback) {
+
+    const jsonReq = {
+      UserPoolId: this.getUserPoolId(),
+      Username: username,
+    };
+    if (this.getUserContextData(username)) {
+      jsonReq.UserContextData = this.getUserContextData(username);
+    }
+    this.client.config.update({
+      accessKeyId: credentials.accessKeyId,
+      secretAccessKey: credentials.secretAccessKey,
+    });
+    this.client.adminGetUser(jsonReq,
+      (err, data) => {
+        if (err) {
+          return callback(err, null);
+        }
+        return callback(null, data);
+      });
+  }
+
 
 
   /**
